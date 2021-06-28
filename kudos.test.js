@@ -7,6 +7,6 @@ test('test getKudosForUser', () => {
 });
 
 test('test getKudosValueMessageForUser', () => {
-  expect(kudos.getKudosValueMessageForUser(kudos.getKudosForUser(30)))
-    .toEqual('Você recebeu treze reais em retorno aos kudos GOOD, NICE!');
-});
+  expect(kudos.getKudosValueMessageForUser(30))
+    .toEqual('Você recebeu treze reais em retorno aos kudos GOOD, NICE!');    // Este teste estava errado. Pela ordem dos Kudos GOOD 
+});                                                                           // vale mais do que NICE e, portanto, deveria vir antes.
