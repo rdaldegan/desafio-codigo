@@ -1,0 +1,111 @@
+body, html {
+  margin: 0;
+  padding: 5em;
+  width: 100%;
+  height: 100%;
+  font-family: fantasy;
+  background: #1d8986;
+  overflow: hidden;
+}
+
+#svg{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 100;
+} 
+
+section {
+  max-width: 40%;
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+}
+
+section#section2{
+  display: none;
+  z-index: 101;
+}
+
+.display {
+  display: flex !important;
+  animation: fadeIn 2s;
+  -webkit-animation: fadeIn 2s;
+  -moz-animation: fadeIn 2s;
+  -o-animation: fadeIn 2s;
+  -ms-animation: fadeIn 2s;
+}
+@keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@-moz-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+@-webkit-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+@-o-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+@-ms-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+h1 {
+  font-size: 2em;
+  max-height: 400px;
+  overflow: hidden;
+  margin: 15px 0;
+  padding: 0;
+}
+
+p {
+  font-size: 1.4em;
+  margin: 15px 0;
+  padding: 0;
+}
+
+input {
+  width: 250px;
+  font-size: 1.4em;
+  margin: 15px 0;
+  padding: 0;
+  padding: 5px 0;
+  border-radius: 5px;
+}
+
+button {
+  background: #234B7A;
+  margin-top: 20px;
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 5px;
+  width: 250px;
+  cursor: pointer;
+  font-size: 1.4em;
+}
+
+button#button2 {
+  background: #1d8986;
+}
+
+#alert {
+  color: #842929;
+}
+
+.pointer {
+  pointer-events: auto !important;
+}

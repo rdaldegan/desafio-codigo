@@ -1,0 +1,86 @@
+<!-- 
+  Código feito para simular uma interface onde o usuário poderia trocar seus pontos por kudos e kudos por reais.
+  Apenas uma página html simple ainda sem responsividade com javascript para algumas animações e lógica e css para estilo
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/main.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <script src="./js/kudos.js"></script>
+  <title>Desafio Novatics</title>
+</head>
+<body>
+    <svg id="svg" height="100%" width="100%" viewBox="0 0 1366 768" preserveAspectRatio="none">
+      <path class="svg" d="M0,0h1366v768H0c0,0,207.5-69.5,413.5-52.5s397.5-50,401-51c156-47,334-24,336-263s-157-273-157-273
+      s-141-48-498,30C176.7,228.2,0,0,0,0z" fill='#234B7A' />
+    </svg>
+
+    <section id="section1">
+      <h1>Converta seus pontos</h1>
+      <p>Troque seus pontos por kudos e seus kudos por dinheiro de verdade!</p>
+      <input id="input" type="number" min="0" max="999999" placeholder="Pontos">
+      <button id='button1' type="button">Converter</button>
+      <span id="alert"></span>
+    </section>
+
+    <section id="section2">
+      <h1 id="mostrador"></h1>
+      <button id='button2' type="button">Voltar</button>
+    </section>
+
+    <script>
+      var btn1 = document.getElementById('button1');
+      var btn2 = document.getElementById('button2');
+      var sec1 = document.getElementById('section1');
+      var sec2 = document.getElementById('section2');
+      var inp = document.getElementById('input');
+      var alert = document.getElementById('alert');
+      var most = document.getElementById('mostrador');
+      var svg = document.getElementById('svg');
+
+      var transition = anime({
+        targets: '.svg',
+        d: [
+          { value: 'M0,0h1366v768H0c0,0,207.5-69.5,413.5-52.5s397.5-50,401-51c156-47,334-24,336-263s-157-273-157-273s-141-48-498,30C176.7,228.2,0,0,0,0z'},
+          { value: 'M0,0h1366v768H0c0,0-1130.5-144.5-924.5-127.5s257.5-71,261-72c156-47,458,91,460-148s-359-176-359-176s168-205-189-127C-1070.3,187.2,0,0,0,0z'},
+        ],
+        easing: 'easeInOutQuint',
+        duration: 1300,
+        loop: false,
+        autoplay: false,
+      })
+
+      btn1.addEventListener('click', function() {
+        if(inp.value){
+          most.innerHTML = getKudosValueMessageForUser(inp.value);
+          transition.restart()
+          svg.classList.add('pointer');
+          alert.innerHTML = '';
+          setTimeout(() => {
+            sec2.classList.add('display');
+            inp.value = '';
+          }, 1500)
+        } else {
+          alert.innerHTML = "Escolha um valor de pontos válido!";
+        }
+      })
+
+      btn2.addEventListener('click', function() {
+        sec2.classList.remove('display');
+        most.innerHTML = getKudosValueMessageForUser('');
+        transition.reverse();
+        transition.play();
+        svg.classList.remove('pointer');
+        setTimeout(() => {
+          location.reload();
+        }, 1300)
+      })
+    </script>
+</body>
+</html>
