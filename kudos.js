@@ -19,7 +19,6 @@ const KUDOS_TO_REAL = [
 /* 
   Recebe: a quantidade de pontos que ainda devem ser convertidos, o valor em pontos do kudo a ser convertido, a string 
   referente a este kudo e o array de saída após conversão.
-
   Retorna: a quantidade de pontos que ainda precisam ser convertida para os kudos de menor valor e o novo array de saída.
 */
 function getSpecificKudo(rest, ptsValue, kudoString, currentOutput) {
@@ -29,19 +28,20 @@ function getSpecificKudo(rest, ptsValue, kudoString, currentOutput) {
     currentOutput.push(kudoString)
   };
 
-  return [rest, currentOutput];                                          // Retorna o resto dos pontos e o array de saída
+  return [currentOutput, rest];                                          // Retorna o resto dos pontos e o array de saída
 };
 
 /* 
   Recebe: um int representando o número de pontos do usuário
-  Retorna: um array contendo os kudos. Ex.: ['OK', 'GOOD'] 
+  Retorna: um array contendo (1) outro array com os kudos trocados e (2) o restante de pontos que o usuário ainda teria. Ex.: [['OK', 'GOOD'], 3]
+  (foi assumido um caso mais realista que o desafio proposto, onde o usuário não precisaria ter uma quantidade específica de pontos para trocar)
 */
 function getKudosForUser(points) {
   let rest = points;
   let output = [];
 
   for (let i = KUDOS_TO_POINTS.length - 1; i >= 0; i--) {                // Executa a conversão para todos os valores do array KUDOS_TO_POINTS
-    [rest, output] = getSpecificKudo(                                    // Assim podem ser modificados os valores de cada Kudo e adicionar ou removê-los
+    [output, rest] = getSpecificKudo(                                    // Assim podem ser modificados os valores de cada Kudo e adicionar ou removê-los
       rest,                                                              // E o algoritmo continuará funcionando
       KUDOS_TO_POINTS[i].value,
       KUDOS_TO_POINTS[i].name,
@@ -49,37 +49,79 @@ function getKudosForUser(points) {
     );                                                                   // Executa a fução getSpecificKudo()
   };
 
-  return output;
+  return [output, rest];
 }
 
-// Créditos pela função: Carlos R. L. Rodrigues
-//@ http://jsfromhell.com/string/extenso [rev. #3]
 /* 
-  Função levemente adaptada para incluir numeros de até 999 milhões (originalmente alcança numeros de até 63 digitos)
-  Atua em cima de uma string numérica para convertê-la em numeros por extenso
+  Recebe: um int 
+  Retorna: uma string do número recebido por extenso
 */
-String.prototype.extenso = function(c){
-	var ex = [
-		["zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez", "onze", "doze", "treze", "quatorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"],
-		["dez", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"],
-		["cem", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"],
-		["mil", "milhão"]
-	];
-	var a, n, v, i, n = this.replace(c ? /[^,\d]/g : /\D/g, "").split(","), e = " e ", $ = "real", d = "centavo", sl;
-	for(var f = n.length - 1, l, j = -1, r = [], s = [], t = ""; ++j <= f; s = []){
-		j && (n[j] = (("." + n[j]) * 1).toFixed(2).slice(2));
-		if(!(a = (v = n[j]).slice((l = v.length) % 3).match(/\d{3}/g), v = l % 3 ? [v.slice(0, l % 3)] : [], v = a ? v.concat(a) : v).length) continue;
-		for(a = -1, l = v.length; ++a < l; t = ""){
-			if(!(i = v[a] * 1)) continue;
-			i % 100 < 20 && (t += ex[0][i % 100]) ||
-			i % 100 + 1 && (t += ex[1][(i % 100 / 10 >> 0) - 1] + (i % 10 ? e + ex[0][i % 10] : ""));
-			s.push((i < 100 ? t : !(i % 100) ? ex[2][i == 100 ? 0 : i / 100 >> 0] : (ex[2][i / 100 >> 0] + e + t)) +
-			((t = l - a - 2) > -1 ? " " + (i > 1 && t > 0 ? ex[3][t].replace("ão", "ões") : ex[3][t]) : ""));
-		}
-		a = ((sl = s.length) > 1 ? (a = s.pop(), s.join(" ") + e + a) : s.join("") || ((!j && (n[j + 1] * 1 > 0) || r.length) ? "" : ex[0][0]));
-		a && r.push(a + (c ? (" " + (v.join("") * 1 > 1 ? j ? d + "s" : (/0{6,}$/.test(n[0]) ? "de " : "") + $.replace("l", "is") : j ? d : $)) : ""));
-	}
-	return r.join(e);
+function extenso(number){
+  // Verifica se o numero é zero e retorna "zero" caso necessário
+  if(number === 0){
+    return 'zero'
+  }
+
+  // Define as strings pra unidades dezenas e centenas
+  const unidades = ["um", "dois", "três", "quatro", "cinco", "seis", "sete", 
+                  "oito", "nove", "dez", "onze", "doze", "treze", "quatorze", 
+                  "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"];
+
+  const dezenas = ["vinte", "trinta", "quarenta", "cinquenta", 
+                "sessenta", "setenta", "oitenta", "noventa"];
+
+  const centenas = ["cento", "duzentos", "trezentos", "quatrocentos", "quinhentos",
+                  "seiscentos", "setecentos", "oitocentos", "novecentos"];
+  
+  // Converte o numero para string com o objetivo de facilitar trabalhar com índices e o tamanho do numero
+  let numString = number.toString();
+
+  // Define a string de saída
+  outputString = '';
+
+  // 1000 <= numero
+  // Se o numero for maior que mil, usa recursão para fazer a parte supereior a mil e depois continua o algoritmo para o resto do numero
+  if (numString.length > 3) {
+    outputString += extenso(Math.floor(number/1000)) + ' mil'
+    numString = String(parseInt(numString)%1000);
+    if(numString.length > 0){
+      outputString += ' ';
+    }
+  }
+  
+  // numero < 20
+  // Se o numero for menor que 20 apenas usa o array de unidades (que vai até 19)
+  if (number < 20) {
+    outputString += unidades[number - 1];
+  }
+
+  // 20 <= numero < 100
+  // Se o numero for maior que 20 verifica se o final é 0. Se for apenas adiciona a dezena. Se não for adiciona a dezena e a unidade
+  else if (numString.length === 2) {
+    if(numString[1] === '0'){
+      outputString += dezenas[numString[0] - 2];
+    }
+    else{
+      outputString += dezenas[numString[0] - 2] + ' e ' + unidades[numString[1] - 1];
+    }
+  }
+  
+  // 100 <= numero <= 999
+  // Se o numero for maior que 100 verificaa se a centena é "cem" ou "centos" e se é necessário adicionar a dezena e unidade (por recursão)
+  if (numString.length == 3) {
+    if (numString === '100'){
+      outputString += "cem";
+    }
+    else if (numString[1] === '0' && numString[2] === '0'){
+      outputString += centenas[numString[0] - 1];
+    }
+    else{
+      outputString += centenas[numString[0] - 1] + ' e ' + extenso(parseInt(numString[1] + numString[2]));
+    }
+  }
+
+  // Retorna a string montada
+  return outputString;
 }
 
 /* 
@@ -87,7 +129,7 @@ String.prototype.extenso = function(c){
   Retorna: a mensagem padrão com o valor em reais dos kudos por extenso. Ex.: Parabéns, você ganhou vinte e cinco reais
 */
 function getKudosValueMessageForUser(points) {
-  kudos = getKudosForUser(points);                                                  // Pega o array de kudos a partir dos pontos do usuario
+  [kudos, rest] = getKudosForUser(points);                                          // Pega o array de kudos a partir dos pontos do usuario
   let totalReais = 0;
   for (let i = KUDOS_TO_REAL.length - 1; i >= 0 ; i--) {                            // Percorre o array KUDOS_TO_REAL
     let currentKudo = KUDOS_TO_REAL[i];
@@ -98,24 +140,30 @@ function getKudosValueMessageForUser(points) {
       };
     };
   };
+
+  // Chama a função extenso() para converter o total de reais e o resto de pontos para extenso
+  let totalReaisString = extenso(totalReais);
+  let restString = extenso(rest);
   
-  let mainString = "Você recebeu <valueReais> em retorno aos kudos <listItems>!"    // Cria uma string base a ser modificada
+  // Adiciona " real" ou " reais" dependendo se o o totalReaisString é "um"
+  if(totalReaisString === "um"){
+    totalReaisString += ' real';
+  } else {
+    totalReaisString += ' reais'
+  }
   
-  let totalReaisString = String(totalReais).extenso("BRL");                         // Converte o valor em reais para o numero em extenso
+  // Monta a string com os kudos
+  let arrayString = kudos.join(", "); 
 
-  let arrayString = kudos.join(", ");                                               // Converte o array dos kudos do colaborador para uma string separada por ", "
-
-  let outputString = mainString.replace(/<valueReais>/, totalReaisString);          // Monta a string a ser retornada
-  outputString = outputString.replace(/<listItems>/, arrayString);
-
-  return outputString;  
+  // Retorna a string final
+  return `Você recebeu ${totalReaisString} em retorno aos kudos ${arrayString} e lhe restam ${restString} pontos!`;
 };
 
 /* 
   Notas de desenvolvimento
-  Durante a elaboração do código foram feitas algumas atribuições que poderiam ser removidas, mas facilitam a leitura e, assim, a compreensão durante futura manutenção.
-  Além disso, seria possível desenvolver a função de conversão de valores numéricos para sua forma por extenso, mas em um cenário real este tipo de problema é facilmente 
-  resolvido com bibliotecas e funções de terceiros.
+  Foram realizadas algumas atribuições de variáveis desnecessárias para facilitar a leitura do código
+  Além disso, a função de conversão para numero por extenso foi construída apenas por ser um desafio de programação. 
+  Em um cenário real seria mais simples utilizar bibliotecas de terceiros.
 */
 
 module.exports = {
