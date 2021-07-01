@@ -84,7 +84,7 @@ function extenso(number){
   if (numString.length > 3) {
     outputString += extenso(Math.floor(number/1000)) + ' mil'
     numString = String(parseInt(numString)%1000);
-    if(numString.length > 0){
+    if(numString.length > 0 && parseInt(numString) !== 0){
       outputString += ' ';
     }
   }
@@ -130,6 +130,10 @@ function extenso(number){
 */
 function getKudosValueMessageForUser(points) {
   [kudos, rest] = getKudosForUser(points);                                          // Pega o array de kudos a partir dos pontos do usuario
+
+  if(kudos.length === 0){
+    return 'Você ainda não tem kudos suficientes para trocar'
+  }
   let totalReais = 0;
   for (let i = KUDOS_TO_REAL.length - 1; i >= 0 ; i--) {                            // Percorre o array KUDOS_TO_REAL
     let currentKudo = KUDOS_TO_REAL[i];
@@ -169,4 +173,6 @@ function getKudosValueMessageForUser(points) {
 module.exports = {
   getKudosForUser,
   getKudosValueMessageForUser,
+  getSpecificKudo,
+  extenso,
 };

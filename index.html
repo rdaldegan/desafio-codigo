@@ -58,6 +58,7 @@
 
       btn1.addEventListener('click', function() {
         if(inp.value){
+          console.log(getKudosForUser(inp.value))
           most.innerHTML = getKudosValueMessageForUser(inp.value);
           transition.restart()
           svg.classList.add('pointer');
@@ -73,7 +74,7 @@
 
       btn2.addEventListener('click', function() {
         sec2.classList.remove('display');
-        most.innerHTML = getKudosValueMessageForUser('');
+        most.innerHTML = '';
         transition.reverse();
         transition.play();
         svg.classList.remove('pointer');
